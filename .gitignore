@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# replit
+*.replit
+replit.nix
+replit_zip_error_log.txt
+
 # C extensions
 *.so
 
