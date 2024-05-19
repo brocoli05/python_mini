@@ -1,5 +1,7 @@
 from turtle import Screen, Turtle
 from snake import Snake
+from food import Food
+from scoreboard import Scoreboard
 import time
 
 screen = Screen()
@@ -10,45 +12,49 @@ screen.tracer(0)    # update the screen
 
 # TODO 1: Create a snake body
 # Each turtle should be a white square (default size: 20x20)
+snake = Snake()
 
-starting_positions = [(0,0), (-20, 0), (-40, 0)]
-segments = []
+# TODO 3: Create snake food
+food = Food()
 
-for position in starting_positions:
-    segment = Turtle("square")
-    # segment.shape("square")
-    segment.color("white")
-    segment.penup()    # delete the line
-    segment.goto(position)
-    segments.append(segment)
-
+# TODO 5: Create a scoreboard
+scoreboard = Scoreboard()
 
 # TODO 2: Move the snake
-screen.update()
+screen.listen()
+screen.onkey(snake.up,"Up")
+screen.onkey(snake.down,"Down")
+screen.onkey(snake.left,"Left")
+screen.onkey(snake.right, "Right")
+
 game_is_on = True
 
 while game_is_on:
     screen.update()   # update the screen only once all the segments having moved forward
     time.sleep(0.1)  # 0.1 sec delay to see each movement
-    # for segment in segments:
-    #     segment.forward(10)
-    for seg_num in range(len(segments) - 1, 0, -1):
-        # start from the last (start = the last index, stop = the first index, step = each movement)
-        new_x = segments[seg_num - 1].xcor()
-        new_y = segments[seg_num - 1].ycor()
-        # save the previous index of x and y value
-        segments[seg_num].goto(new_x, new_y)
-    segments[0].forward(20)
+    snake.move()
 
-# TODO 3: Create snake food
+    # TODO 4: Detect collision with food
+    if snake.head.distance(food) < 15:  # food (10x10)
+        # print("nom nom nom")
+        food.refresh()
+        snake.extend()
+        scoreboard.increase_score()
 
-# TODO 4: Detect collision with food
+    # TODO 6: Detect collision with wall
+    if snake.head.xcor() > 280 or snake.head.xcor() < -280 or snake.head.ycor() > 280 or snake.head.ycor() < -280:
+        game_is_on = False
+        scoreboard.game_over()
 
-# TODO 5: Create a scoreboard
-
-# TODO 6: Detect collision with wall
-
-# TODO 7: Detect collision with tail
-
+    # TODO 7: Detect collision with tail
+    # if head collides with any segment in the tail:
+        # trigger game_over
+    for segment in snake.segments:
+        # exclude the head
+        if segment == snake.head:
+            pass
+        elif snake.head.distance(segment) < 10:
+            game_is_on = False
+            scoreboard.game_over()
 
 screen.exitonclick()
