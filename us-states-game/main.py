@@ -22,6 +22,16 @@ while len(guessed_states) < 50:
     # title(): make first letter capitalize
 
     if answer_state == "Exit":
+        # Save the missing states to a.csv
+        # list comprehension ==> make code shorter
+        missing_states = [state for state in all_states if state not in guessed_states]
+        # missing_states = []
+        # for state in all_states:
+        #     if state not in guessed_states:
+        #         missing_states.append(state)
+
+        new_data = pandas.DataFrame(missing_states)
+        new_data.to_csv("a.csv")
         break
 
     # TODO 5: Record the correct guesses in a list
@@ -37,12 +47,4 @@ while len(guessed_states) < 50:
         t.goto(int(state_data.x.iloc[0]), int(state_data.y.iloc[0]))  # int(): avoid bad screen distance
         t.write(state_data.state.item())
 
-# Save the missing states to a.csv
-missing_states = []
-for state in all_states:
-    if state not in guessed_states:
-        missing_states.append(state)
-
-new_data = pandas.DataFrame(missing_states)
-new_data.to_csv("a.csv")
 # screen.exitonclick()
