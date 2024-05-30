@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
@@ -7,16 +8,26 @@ def save():
     website = website_input.get()
     email = email_input.get()
     password = password_input.get()
-    passwords = [website, email, password]
-    # Write to the data inside the entries to a data.txt file when the Add button is clicked
-    # Each website, email, and password combination should be on a new line inside the file
-    # All fields need to be cleared after Add button is pressed
-    with open("data.txt", "a") as data_file:
-        data_file.write(f"{website} | {email} | {password}\n")
-        # data_file.writelines("%s | " % data for data in passwords)
+    # passwords = [website, email, password]
 
-    website_input.delete(0, END)
-    password_input.delete(0, END)
+    # Do not save the data and show the pop up above if the website or password fields were left empty
+    if len(website) == 0 or len(email) == 0 or len(password) == 0:
+        messagebox.showinfo(title="Oops", message=f"Please make sure you haven't left any fields empty.")
+    else:
+        # Messagebox for checking the data
+        is_ok = messagebox.askokcancel(title=website, message=f"These are the details entered: \nEmail: {email} "
+                                                              f"\nPassword: {password} \nIs it ok to save?")
+
+        if is_ok:
+            # Write to the data inside the entries to a data.txt file when the Add button is clicked
+            # Each website, email, and password combination should be on a new line inside the file
+            # All fields need to be cleared after Add button is pressed
+            with open("data.txt", "a") as data_file:
+                data_file.write(f"{website} | {email} | {password}\n")
+                # data_file.writelines("%s | " % data for data in passwords)
+
+            website_input.delete(0, END)
+            password_input.delete(0, END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
