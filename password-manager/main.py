@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 import random
 import pyperclip
-
+import json
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_password():
@@ -34,24 +34,36 @@ def save():
     website = website_input.get()
     email = email_input.get()
     password = password_input.get()
-    # passwords = [website, email, password]
+    # create json data
+    new_data = {
+        website: {
+            'email': email,
+            'password': password,
+        }
+    }
 
     # Do not save the data and show the pop up above if the website or password fields were left empty
     if len(website) == 0 or len(email) == 0 or len(password) == 0:
         messagebox.showinfo(title="Oops", message=f"Please make sure you haven't left any fields empty.")
     else:
-        # Messagebox for checking the data
-        is_ok = messagebox.askokcancel(title=website, message=f"These are the details entered: \nEmail: {email} "
-                                                              f"\nPassword: {password} \nIs it ok to save?")
-
-        if is_ok:
-            # Write to the data inside the entries to a data.txt file when the Add button is clicked
+        # Modify the code to handle the FileNotFoundError
+        # Create a new data.json file if it does not exist
+        # If the file already exists, then simply add the new entry
+        try:
+            # Write to the data inside the entries to a data.json file when the Add button is clicked
             # Each website, email, and password combination should be on a new line inside the file
             # All fields need to be cleared after Add button is pressed
-            with open("data.txt", "a") as data_file:
-                data_file.write(f"{website} | {email} | {password}\n")
-                # data_file.writelines("%s | " % data for data in passwords)
+            with open("data.json", "r") as data_file:
+                data = json.load(data_file)  # Reading old data
+        except FileNotFoundError:  # if there is error
+            with open("data.json", "w") as data_file:
+                json.dump(new_data, data_file, indent=4)
+        else:  # if there is no error
+            data.update(new_data)  # Updating old data with new data
 
+            with open("data.json", "w") as data_file:
+                json.dump(data, data_file, indent=4)  # Saving updated data
+        finally:
             website_input.delete(0, END)
             password_input.delete(0, END)
 
