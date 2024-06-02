@@ -67,6 +67,22 @@ def save():
             website_input.delete(0, END)
             password_input.delete(0, END)
 
+# ---------------------------- FIND PASSWORD ------------------------------- #
+def find_password():
+    website = website_input.get()
+    try:
+        with open("data.json", "r") as data_file:
+            data = json.load(data_file)
+    except FileNotFoundError:
+        messagebox.showerror(title="Error", message="No Data File Found")
+    else:
+        if website in data:
+            email = data[website]['email']
+            password = data[website]['password']
+            messagebox.showinfo(title=website, message=f"Email: {email}\nPassword: {password}")
+        else:
+            messagebox.showerror(title="Error", message=f"No details for {website} exists")
+
 
 # ---------------------------- UI SETUP ------------------------------- #
 window = Tk()
@@ -88,7 +104,7 @@ password_label.grid(column=0, row=3)
 
 # Entries
 website_input = Entry(width=35)
-website_input.grid(column=1, row=1, columnspan=2, sticky="EW")  # sticky: for alignment
+website_input.grid(column=1, row=1, sticky="EW")  # sticky: for alignment
 website_input.focus()  # put cursor right after launching the app
 email_input = Entry(width=35)
 email_input.grid(column=1, row=2, columnspan=2, sticky="EW")
@@ -97,6 +113,8 @@ password_input = Entry(width=21)
 password_input.grid(column=1, row=3, sticky="EW")
 
 # Buttons
+search_button = Button(text="Search", command=find_password)
+search_button.grid(column=2, row=1, sticky="EW")
 generate_button = Button(text="Generate Password", command=generate_password)
 generate_button.grid(column=2, row=3, sticky="EW")
 add_button = Button(text="Add", width=36, command=save)
